@@ -1,17 +1,20 @@
 import React, { Component } from "react";
+import TableRow from "./TableRow"
 
 import API from "../utils/API";
 
 class Directory extends Component {
+
+    state = {
+        result:[]
+    }
 
     componentDidMount() {
         this.searchPeople();
       }
     
       searchPeople = (query) => {
-        API.search(query).then((res) => {
-          console.log(res);
-        });
+        API.search(query).then((res) => this.setState({ result: res.data.results}));
       };
     
 
@@ -31,27 +34,20 @@ class Directory extends Component {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <th scope="row">1</th>
-                  <td>Mark</td>
-                  <td>Otto</td>
-                  <td>@mdo</td>
-                  <td>@mdo</td>
-                </tr>
-                <tr>
-                  <th scope="row">2</th>
-                  <td>Jacob</td>
-                  <td>Thornton</td>
-                  <td>@fat</td>
-                  <td>@mdo</td>
-                </tr>
-                <tr>
-                  <th scope="row">3</th>
-                  <td>Larry</td>
-                  <td>the Bird</td>
-                  <td>@twitter</td>
-                  <td>@mdo</td>
-                </tr>
+                
+                    {this.state.result.map(employee =>(
+                        <TableRow 
+                            picture={employee.picture.thumbnail}
+                            name={employee.name}
+                            phone={employee.phone}
+                            email={employee.email}
+                            dob={employee.dob.date.substr(0, 10)}
+                        />
+
+                    ))}
+
+                  
+               
               </tbody>
             </table>
           </div>
