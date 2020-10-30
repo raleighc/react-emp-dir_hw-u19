@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SearchBar = () => {
+const SearchBar = (props) => {
     return (
         <form className="text-center" style= {formStyle}>
             <input
@@ -8,8 +8,8 @@ const SearchBar = () => {
           name="search"
           style={searchStyle}
           placeholder="Search"
-        //   value={this}
-        //   onChange={this.onChange}
+        //   value={this.props.search}
+          onChange={props.handleInputChange}
         />
         </form>
     );
