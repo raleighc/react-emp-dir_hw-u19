@@ -4,10 +4,10 @@ import SearchBar from "./layout/SearchBar";
 
 import API from "../utils/API";
 
-
 class Directory extends Component {
   state = {
     result: [],
+    alteredResult: [],
     search: "",
   };
 
@@ -17,17 +17,26 @@ class Directory extends Component {
 
   handleInputChange = (event) => {
     // Getting the value and name of the input which triggered the change
+
     let value = event.target.value;
     const name = event.target.name;
+
+    this.filterSearch(value);
     // Updating the input's state
     this.setState({
       [name]: value,
     });
   };
 
+  filterSearch = (search) => {
+    search = search.toLowerCase();
+    const result = this.state.result.filter(emp => emp.name.first.toLowerCase().indexOf(search) !== -1 || emp.name.last.toLowerCase().indexOf(search) !== -1)
+    this.setState({alteredResult: result})
+  };
+
   searchPeople = (query) => {
     API.search(query).then((res) =>
-      this.setState({ result: res.data.results })
+      this.setState({ result: res.data.results, alteredResult: res.data.results })
     );
   };
 
@@ -35,7 +44,7 @@ class Directory extends Component {
     return (
       <>
         <SearchBar
-        //   search={this.state.search}
+          //   search={this.state.search}
           handleInputChange={this.handleInputChange}
         />
         <div className="container">
@@ -52,7 +61,7 @@ class Directory extends Component {
                   </tr>
                 </thead>
                 <tbody>
-                  {this.state.result.map((employee) => (
+                  {this.state.alteredResult.map((employee) => (
                     <TableRow
                       picture={employee.picture.thumbnail}
                       name={employee.name}
