@@ -6,6 +6,7 @@ import API from "../utils/API";
 
 class Directory extends Component {
   state = {
+    ascending: true,
     result: [],
     alteredResult: [],
     search: "",
@@ -30,14 +31,43 @@ class Directory extends Component {
 
   filterSearch = (search) => {
     search = search.toLowerCase();
-    const result = this.state.result.filter(emp => emp.name.first.toLowerCase().indexOf(search) !== -1 || emp.name.last.toLowerCase().indexOf(search) !== -1)
-    this.setState({alteredResult: result})
+    const result = this.state.result.filter(
+      (emp) =>
+        emp.name.first.toLowerCase().indexOf(search) !== -1 ||
+        emp.name.last.toLowerCase().indexOf(search) !== -1
+    );
+    this.setState({ alteredResult: result });
   };
 
   searchPeople = (query) => {
     API.search(query).then((res) =>
-      this.setState({ result: res.data.results, alteredResult: res.data.results })
+      this.setState({
+        result: res.data.results,
+        alteredResult: res.data.results,
+      })
     );
+  };
+
+  sortByName = () => {
+    const compare = (a, b) => {
+      if (this.state.ascending) {
+        if (a.name.first > b.name.first) return 1;
+        if (a.name.first < b.name.first) return -1;
+        return 0;
+      } else {
+        if (a.name.first < b.name.first) return 1;
+        if (a.name.first > b.name.first) return -1;
+        return 0;
+      }
+    };
+
+    const ascendingOrder = this.state.result.sort(compare);
+    this.setState({
+      ascending: !this.state.ascending,
+      alteredResult: ascendingOrder,
+    });
+
+    // console.log(ascendingOrder);
   };
 
   render() {
@@ -54,7 +84,9 @@ class Directory extends Component {
                 <thead>
                   <tr>
                     <th scope="col">Image</th>
-                    <th scope="col">Name</th>
+                    <th scope="col" onClick={this.sortByName}>
+                      Name
+                    </th>
                     <th scope="col">Phone</th>
                     <th scope="col">Email</th>
                     <th scope="col">DOB</th>
@@ -68,6 +100,7 @@ class Directory extends Component {
                       phone={employee.phone}
                       email={employee.email}
                       dob={employee.dob.date.substr(0, 10)}
+                      key={employee.dob.date}
                     />
                   ))}
                 </tbody>
